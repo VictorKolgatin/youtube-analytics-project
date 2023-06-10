@@ -3,7 +3,6 @@ import os
 from googleapiclient.discovery import build
 
 
-
 class Channel:
     """Класс для ютуб-канала"""
 
@@ -22,6 +21,37 @@ class Channel:
         self.subscriberCount = self.channel["items"][0]["statistics"]["subscriberCount"]
         self.video_count = self.channel["items"][0]["statistics"]["videoCount"]
         self.viewCount = self.channel["items"][0]["statistics"]["viewCount"]
+
+    def __str__(self):
+        return f'{self.title} ({self.url}'
+
+    def __add__(self, other):
+        obj = self.to_class(other)
+        return int(self.subscriberCount) + int(obj)
+
+    def __sub__(self, other):
+        obj = self.to_class(other)
+        return int(self.subscriberCount) - int(obj)
+
+    def __gt__(self, other):
+        obj = self.to_class(other)
+        return self.subscriberCount > obj
+
+    def __ge__(self, other):
+        obj = self.to_class(other)
+        return self.subscriberCount >= obj
+
+    def __lt__(self, other):
+        obj = self.to_class(other)
+        return self.subscriberCount < obj
+
+    def __le__(self, other):
+        obj = self.to_class(other)
+        return self.subscriberCount <= obj
+
+    def __eq__(self, other):
+        obj = self.to_class(other)
+        return self.subscriberCount == obj
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
@@ -49,8 +79,13 @@ class Channel:
         return f'Канал: {channel}' \
                f'Создан объект класса "Channel" {youtube_channel}'
 
+    @classmethod
+    def to_class(cls, obj):
+        if not isinstance(obj, Channel):
+            raise TypeError('Операнд справа должен быть экземпляром класса '
+                            'Channel!')
+        return obj.subscriberCount
 
     def to_json(self, file_name=None):
         with open(file_name, 'w') as file:
             json.dump(self.channel, file)
-
